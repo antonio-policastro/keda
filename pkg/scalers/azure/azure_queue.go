@@ -39,26 +39,7 @@ func GetAzureQueueLength(ctx context.Context, httpClient util.HTTPDoer, podIdent
 	if err != nil {
 		return -1, err
 	}
-
-	visibleMessageCount, err := getVisibleCount(ctx, &queueURL, 32)
-	if err != nil {
-		return -1, err
-	}
 	approximateMessageCount := props.ApproximateMessagesCount()
 
-	if visibleMessageCount == 32 {
-		return approximateMessageCount, nil
-	}
-
-	return visibleMessageCount, nil
-}
-
-func getVisibleCount(ctx context.Context, queueURL *azqueue.QueueURL, maxCount int32) (int32, error) {
-	messagesURL := queueURL.NewMessagesURL()
-	queue, err := messagesURL.Peek(ctx, maxCount)
-	if err != nil {
-		return 0, err
-	}
-	num := queue.NumMessages()
-	return num, nil
+	return approximateMessageCount, nil
 }
